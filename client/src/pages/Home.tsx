@@ -3,6 +3,12 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import {
   Activity,
   ArrowRight,
+  Cpu,
+  Gauge,
+  Gamepad2,
+  MousePointer2,
+  RefreshCcw,
+  Trophy,
   ArrowUpRight,
   Bot,
   Braces,
@@ -54,6 +60,7 @@ const navItems = [
   ["Journey", "journey"],
   ["Work", "work"],
   ["AI Lab", "ai-lab"],
+  ["Arena", "arena"],
   ["Stack", "stack"],
   ["Contact", "contact"],
 ] as const;
@@ -247,6 +254,36 @@ function NeuralCore() {
   );
 }
 
+function SystemsArena() {
+  const [mission, setMission] = useState("ops");
+  const [architecture, setArchitecture] = useState("agent");
+  const [deployed, setDeployed] = useState(false);
+  const missions = {
+    ops: { title: "Automate an operations queue", constraint: "High volume · structured data · audit trail", best: "pipeline" },
+    support: { title: "Build a support copilot", constraint: "Uncertain context · retrieval · human handoff", best: "rag" },
+    product: { title: "Ship an AI SaaS MVP", constraint: "Fast validation · clean APIs · observable agents", best: "agent" },
+  } as const;
+  const architectures = [
+    { id: "agent", label: "AGENT LOOP", detail: "Orchestrate · call tools · validate", icon: Network },
+    { id: "rag", label: "RAG SERVICE", detail: "Retrieve · ground · answer", icon: ScanSearch },
+    { id: "pipeline", label: "DATA PIPELINE", detail: "Ingest · transform · observe", icon: Database },
+  ] as const;
+  const selectedMission = missions[mission as keyof typeof missions];
+  const selectedArchitecture = architectures.find((item) => item.id === architecture) ?? architectures[0];
+  const score = architecture === selectedMission.best ? 96 : architecture === "agent" ? 84 : 78;
+  return (
+    <section id="arena" className="arena-section section-pad">
+      <div className="container">
+        <div className="arena-heading reveal-item"><div><SectionKicker index="06 / ARENA" label="SYSTEM DESIGN CHALLENGE" tone="ice" /><h2>Think like an<br /><em>AI engineer.</em></h2></div><div className="arena-intro"><StatusPill tone="ice">PLAYABLE ARCHITECTURE</StatusPill><p>Pick a real product constraint, choose a system shape, and see how the architecture responds. It is a small game with an engineering point of view.</p></div></div>
+        <div className="arena-shell reveal-item">
+          <aside className="arena-sidebar"><div className="arena-sidebar-title"><Gamepad2 size={17} /><span>MISSION SELECT</span></div>{Object.entries(missions).map(([id, item], index) => <button type="button" key={id} onClick={() => { setMission(id); setDeployed(false); }} className={mission === id ? "active" : ""}><span className="arena-index">0{index + 1}</span><span><b>{item.title}</b><small>{item.constraint}</small></span><ArrowUpRight size={14} /></button>)}<div className="arena-side-foot"><span className="status-pill muted"><span className="status-pulse" />NO ACCOUNT REQUIRED</span><span>Results stay in this browser.</span></div></aside>
+          <div className="arena-main"><div className="arena-mission"><div><span className="meta-label">CURRENT MISSION / {mission.toUpperCase()}</span><h3>{selectedMission.title}</h3><p>{selectedMission.constraint}</p></div><span className="arena-score"><Trophy size={15} /><b>{deployed ? score : "—"}</b><small>FIT SCORE</small></span></div><div className="arena-options"><span className="meta-label">CHOOSE YOUR SYSTEM SHAPE</span><div className="arena-choices">{architectures.map((item) => { const Icon = item.icon; return <button type="button" key={item.id} onClick={() => { setArchitecture(item.id); setDeployed(false); }} className={architecture === item.id ? "selected" : ""}><Icon size={17} /><span><b>{item.label}</b><small>{item.detail}</small></span>{architecture === item.id && <Check size={15} />}</button>; })}</div></div><div className={`arena-graph ${deployed ? "deployed" : ""}`}><div className="arena-graph-grid" /><div className="arena-node node-input"><MousePointer2 size={15} /><span>INPUT</span></div><div className="arena-node node-reason"><Cpu size={15} /><span>REASON</span></div><div className="arena-node node-tools"><Workflow size={15} /><span>TOOLS</span></div><div className="arena-node node-output"><Gauge size={15} /><span>OUTPUT</span></div><svg viewBox="0 0 640 220" preserveAspectRatio="none" aria-hidden="true"><path d="M85 112 C160 45, 200 45, 270 112 S380 179, 454 112 S535 44, 576 112" /><path d="M85 112 C160 178, 200 178, 270 112 S380 45, 454 112 S535 180, 576 112" /></svg><div className="arena-trace-label">{deployed ? "TRACE STABLE / OBSERVABLE" : "READY FOR DEPLOYMENT"}</div></div><div className="arena-footer"><div><span className="meta-label">ENGINEERING NOTE</span><p><b>{selectedArchitecture.label}:</b> {architecture === selectedMission.best ? "Strong fit: the architecture matches the dominant constraint and keeps the next decision visible." : "Interesting trade-off: the choice can work, but it introduces a cost you would need to measure before shipping."}</p></div><button type="button" className="button-primary" onClick={() => setDeployed(true)}>{deployed ? <RefreshCcw size={15} /> : <Zap size={15} />} {deployed ? "Re-run mission" : "Ship architecture"}</button></div></div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function ProjectCard({ project }: { project: typeof projects[number] }) {
   return (
     <article className={`project-card ${project.accent}`}>
@@ -336,6 +373,31 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>(".reveal-item"));
+    if (reducedMotion) {
+      nodes.forEach((node) => node.classList.add("is-visible"));
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => entries.forEach((entry) => entry.isIntersecting && entry.target.classList.add("is-visible")), { threshold: 0.12 });
+    nodes.forEach((node) => observer.observe(node));
+    return () => observer.disconnect();
+  }, [reducedMotion]);
+
+  useEffect(() => {
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+    let frame = 0;
+    const onMove = (event: MouseEvent) => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        document.documentElement.style.setProperty("--mouse-x", `${event.clientX}px`);
+        document.documentElement.style.setProperty("--mouse-y", `${event.clientY}px`);
+      });
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => { cancelAnimationFrame(frame); window.removeEventListener("pointermove", onMove); };
+  }, []);
+
+  useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 24);
       const sections = ["hero", ...navItems.map(([, id]) => id), "open-source"];
@@ -401,7 +463,7 @@ export default function Home() {
         <section id="hero" className="hero-section" data-section="hero">
           <div className="hero-index"><span>00 — ENTRY</span><span className="vertical-rule" /><span>SCROLL TO EXPLORE</span></div>
           <div className="hero-content container">
-            <div className="hero-copy"><div className="eyebrow reveal-item"><span className="eyebrow-pulse" />REMOTE SOFTWARE ENGINEER · LAHORE, PAKISTAN</div><h1 className="hero-title reveal-item">I BUILD<br /><span>INTELLIGENT</span><br />SOFTWARE<span className="accent-dot">.</span></h1><p className="hero-description reveal-item">AI systems, full-stack products, and data automation engineered for teams moving from complexity to leverage.</p><div className="hero-actions reveal-item"><button className="button-primary" onClick={() => scrollToId("work")}>Explore my work <ArrowUpRight size={17} /></button><button className="button-secondary" onClick={() => scrollToId("contact")}>Let's connect <ArrowRight size={17} /></button></div><div className="hero-proof reveal-item"><span><Check size={13} /> AI & Full-Stack Developer</span><span><Check size={13} /> Agentic AI Specialist</span><span><Check size={13} /> Data & Automation Engineer</span></div></div>
+            <div className="hero-copy"><div className="eyebrow reveal-item"><span className="eyebrow-pulse" />REMOTE SOFTWARE ENGINEER · LAHORE, PAKISTAN</div><h1 className="hero-title reveal-item">I BUILD<br /><span>INTELLIGENT</span><br />SOFTWARE<span className="accent-dot">.</span></h1><p className="hero-description reveal-item">AI systems, full-stack products, and data automation engineered for teams moving from complexity to leverage.</p><div className="hero-actions reveal-item"><button className="button-primary" onClick={() => scrollToId("work")}>Explore my work <ArrowUpRight size={17} /></button><button className="button-secondary" onClick={() => scrollToId("contact")}>Let's connect <ArrowRight size={17} /></button></div><div className="hero-proof reveal-item"><span><Check size={13} /> 5+ years hands-on</span><span><Check size={13} /> AI & Full-Stack Developer</span><span><Check size={13} /> Agentic AI Specialist</span><span><Check size={13} /> Data & Automation Engineer</span></div></div>
             <div className="hero-visual reveal-item"><div className="hero-visual-image" style={{ backgroundImage: `url(${HERO_IMAGE})` }} /><div className="hero-visual-scrim" /><NeuralCore /><div className="hero-caption"><span>01 / NEURAL APERTURE</span><span>CURSOR-REACTIVE / PROCEDURAL</span></div></div>
           </div>
             <div className="hero-statusbar container"><div><StatusPill>VISUAL INTERFACE</StatusPill><span>Motion is optional. Clarity is not.</span></div><div><span className="status-label">SYSTEM STATE</span><b>READY TO INSPECT</b></div></div>
@@ -423,6 +485,8 @@ export default function Home() {
           {activeDemo === "pipeline" && <div className="demo-panel"><div className="demo-heading"><div><span className="demo-code">DEMO / 03</span><h3>Data pipeline agent</h3><p>Records move through checks, transformations, and a retry path.</p></div><div className="demo-proof"><span className="proof-chip"><Check size={12} /> FRONT-END SIMULATION</span><StatusPill>INTERACTIVE DEMO</StatusPill></div></div><div className="pipeline-controls"><button type="button" className="mini-button" onClick={() => { setPipelineRun(true); setPipelineError(false); }}><Play size={13} fill="currentColor" /> Run pipeline</button><button type="button" className="mini-button danger" onClick={() => { setPipelineError(true); setPipelineRun(true); }}><Zap size={13} /> Inject quality error</button></div><div className="pipeline-visual" style={{ backgroundImage: `url(${PIPELINE_IMAGE})` }}><div className="pipeline-visual-overlay" />{pipelineSteps.map((step, index) => <div className={`pipeline-step ${pipelineRun && index <= 6 ? "lit" : ""} ${pipelineError && index === 2 ? "error" : ""}`} key={step}><span className="pipeline-dot" />{step}</div>)}</div><div className={`pipeline-state ${pipelineError ? "error" : pipelineRun ? "success" : "idle"}`}>{pipelineError ? <><span><Zap size={14} /> DATA QUALITY ERROR</span><strong>Agent detected issue → root cause analysis → fix proposed → pipeline retried</strong></> : pipelineRun ? <><span><Check size={14} /> SUCCESS</span><strong>Validation passed. Records are ready for analytics.</strong></> : <><span><Activity size={14} /> IDLE</span><strong>Run a workflow or simulate a data quality error.</strong></>}</div></div>}
           {activeDemo === "appointment" && <div className="demo-panel"><div className="demo-heading"><div><span className="demo-code">DEMO / 04</span><h3>Appointment agent</h3><p>Intent detection, availability, and confirmation as a small state machine.</p></div><div className="demo-proof"><span className="proof-chip"><Check size={12} /> MOCK DATA ONLY</span><StatusPill tone="ice">INTERACTIVE DEMO</StatusPill></div></div><div className="appointment-chat"><div className="chat-message user">I want to book a dentist appointment tomorrow.</div><div className="chat-message agent"><span className="agent-avatar"><Bot size={15} /></span><div><span>UNDERSTANDING REQUEST...</span><p>Intent: <b>Appointment booking</b><br />Date: <b>Tomorrow</b><br />Service: <b>Dentist</b></p></div></div><div className="appointment-slots"><span className="meta-label">AVAILABLE SLOTS / MOCK DATA</span><div>{["09:30", "11:00", "14:30"].map((slot) => <button type="button" key={slot} onClick={() => setFormSent(true)} className={formSent ? "selected" : ""}>{slot}<small>{formSent ? "selected" : "select"}</small></button>)}</div></div>{formSent && <div className="booking-confirmed"><Check size={16} /><span><b>BOOKING CONFIRMED</b><small>Interactive demo state only.</small></span></div>}</div></div>}
         </div></div></div></section>
+
+        <SystemsArena />
 
         <section id="stack" className="stack-section section-pad"><div className="container"><SectionKicker index="06 / STACK" label="MY ENGINEERING STACK" /><div className="stack-heading"><h2>Pick a layer.<br /><em>See the leverage.</em></h2><p>No progress bars. The stack is a set of connected capabilities, each with a job inside the larger system.</p></div><div className="skill-ecosystem"><div className="skill-nav">{Object.entries(skillGroups).map(([name, group]) => { const SkillIcon = group.icon; return <button type="button" key={name} onClick={() => setActiveSkill(name)} className={activeSkill === name ? "active" : ""}><SkillIcon size={17} /><span>{name}</span><ArrowUpRight size={14} /></button>; })}</div><div className="skill-focus"><div className="skill-focus-orbit orbit-a" /><div className="skill-focus-orbit orbit-b" /><div className="skill-focus-core"><ActiveSkillIcon size={24} /><span>SOFTWARE<br />ENGINEERING</span></div><div className="skill-focus-copy"><span className="meta-label">ACTIVE LAYER / {activeSkill.toUpperCase()}</span><p>{skillGroups[activeSkill].note}</p><div className="skill-cloud">{skillGroups[activeSkill].items.map((item) => <Chip key={item}>{item}</Chip>)}</div></div></div></div><div className="credential-grid"><div><span className="meta-label">CERTIFICATIONS</span><div className="credential-list">{["Microsoft Certified: Data Analyst Associate", "AWS Certified Solutions Architect", "Developing SQL Databases", "AI Engineer for Developers Associate", "AI Engineer for Data Scientists Associate"].map((item, index) => <div className="credential" key={item}><span>0{index + 1}</span><strong>{item}</strong><small>Credential listed in profile</small><Check size={14} /></div>)}</div></div><div><span className="meta-label">EDUCATION</span><div className="education-list"><div className="education-item"><span>2020</span><div><strong>COMSATS University Islamabad</strong><small>Bachelor's Degree · Computer Software Engineering</small></div></div><div className="education-item"><span>2018</span><div><strong>Punjab Group of Colleges</strong><small>ICS · Computer Science</small></div></div><div className="education-item"><span>—</span><div><strong>Allied School Depalpur Campus</strong><small>Matric</small></div></div></div></div></div></div></section>
 
