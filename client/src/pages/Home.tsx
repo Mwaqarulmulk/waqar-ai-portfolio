@@ -1,5 +1,6 @@
 // Signal / Systems: this page is a readable AI engineering instrument—indexed sections, honest proof chips, and motion used to explain systems.
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { useTheme } from "../contexts/ThemeContext";
 import {
   Activity,
   ArrowRight,
@@ -24,6 +25,9 @@ import {
   ExternalLink,
   Eye,
   FileText,
+  Focus,
+  Moon,
+  Sun,
   Github,
   GitBranch,
   Layers3,
@@ -357,8 +361,18 @@ export default function Home() {
   const [pipelineRun, setPipelineRun] = useState(false);
   const [pipelineError, setPipelineError] = useState(false);
   const [formSent, setFormSent] = useState(false);
+  const [focusMode, setFocusMode] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
+    const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]') ?? document.createElement("link");
+    canonical.rel = "canonical";
+    canonical.href = `${window.location.origin}/`;
+    if (!canonical.parentNode) document.head.appendChild(canonical);
+    const ogUrl = document.querySelector<HTMLMetaElement>('meta[property="og:url"]');
+    if (ogUrl) ogUrl.content = canonical.href;
+    const storedFocus = window.localStorage.getItem("mwm-focus-mode");
+    if (storedFocus === "true") setFocusMode(true);
     const bootTimer = window.setTimeout(() => setBooting(false), 1700);
     const interval = window.setInterval(() => setBootProgress((current) => Math.min(current + 10, 100)), 150);
     return () => { window.clearTimeout(bootTimer); window.clearInterval(interval); };
@@ -446,16 +460,17 @@ export default function Home() {
   }
 
   return (
-    <div className={`site-shell ${reducedMotion ? "reduced-motion" : ""}`}>
+    <div className={`site-shell theme-${theme} ${reducedMotion ? "reduced-motion" : ""} ${focusMode ? "focus-mode" : ""}`}>
+      <a className="skip-link" href="#work">Skip to selected work</a>
       {booting && <div className="preloader" aria-label="Loading portfolio"><div className="preloader-mark"><img src={MWM_MARK} alt="" /><span /></div><div className="preloader-copy"><span>BOOTING INTELLIGENCE</span><b>{String(bootProgress).padStart(3, "0")}</b></div><div className="preloader-progress"><span style={{ width: `${bootProgress}%` }} /></div><span className="preloader-hint">MWM / SOFTWARE ENGINEER / 2026</span></div>}
 
       <header className={`site-nav ${scrolled ? "scrolled" : ""}`}>
         <a className="brand-lockup" href="#hero" aria-label="Muhammad Waqar Ul Mulk home"><span className="brand-mark"><img src={MWM_MARK} alt="" /></span><span className="brand-name"><b>MWM</b><small>AI / FULL-STACK / DATA</small></span></a>
         <nav className="desktop-nav" aria-label="Primary navigation">{navItems.map(([label, id]) => <a key={id} href={`#${id}`} className={activeSection === id ? "active" : ""}>{label}</a>)}</nav>
-        <div className="nav-actions"><button className="command-trigger" type="button" onClick={() => setCommandOpen(true)} aria-label="Open command palette"><Command size={15} /><kbd>⌘ K</kbd></button><a className="resume-trigger" href={RESUME_PRIMARY} target="_blank" rel="noreferrer"><FileText size={13} /> Resume</a><button className="recruiter-trigger" type="button" onClick={() => setRecruiterOpen(true)}>Recruiter mode <ArrowUpRight size={14} /></button><button className="mobile-menu-trigger" type="button" onClick={() => setMobileOpen(true)} aria-label="Open navigation"><Menu size={21} /></button></div>
+        <div className="nav-actions"><button className="command-trigger" type="button" onClick={() => setCommandOpen(true)} aria-label="Open command palette"><Command size={15} /><kbd>⌘ K</kbd></button><button className="display-toggle" type="button" onClick={() => toggleTheme?.()} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`} title={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}>{theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}</button><button className={`display-toggle ${focusMode ? "active" : ""}`} type="button" onClick={() => { const next = !focusMode; setFocusMode(next); window.localStorage.setItem("mwm-focus-mode", String(next)); }} aria-pressed={focusMode} aria-label="Toggle focused reading mode" title="Toggle focused reading mode"><Focus size={14} /></button><a className="resume-trigger" href={RESUME_PRIMARY} target="_blank" rel="noreferrer"><FileText size={13} /> Resume</a><button className="recruiter-trigger" type="button" onClick={() => setRecruiterOpen(true)}>Recruiter mode <ArrowUpRight size={14} /></button><button className="mobile-menu-trigger" type="button" onClick={() => setMobileOpen(true)} aria-label="Open navigation"><Menu size={21} /></button></div>
       </header>
 
-      {mobileOpen && <div className="mobile-nav-overlay"><div className="mobile-nav-top"><span className="meta-label">MWM / INDEX</span><button className="icon-button" onClick={closeMobile} aria-label="Close navigation"><X size={20} /></button></div><nav aria-label="Mobile navigation">{navItems.map(([label, id], index) => <a key={id} href={`#${id}`} onClick={closeMobile}><span>0{index + 1}</span>{label}<ArrowUpRight size={19} /></a>)}</nav><button className="button-primary mobile-recruiter" onClick={() => { closeMobile(); setRecruiterOpen(true); }}>Recruiter mode <ArrowUpRight size={16} /></button><div className="mobile-nav-footer"><span>Built for clear thinking.</span><span>LAHORE / REMOTE</span></div></div>}
+      {mobileOpen && <div className="mobile-nav-overlay"><div className="mobile-nav-top"><span className="meta-label">MWM / INDEX</span><button className="icon-button" onClick={closeMobile} aria-label="Close navigation"><X size={20} /></button></div><nav aria-label="Mobile navigation">{navItems.map(([label, id], index) => <a key={id} href={`#${id}`} onClick={closeMobile}><span>0{index + 1}</span>{label}<ArrowUpRight size={19} /></a>)}</nav><div className="mobile-display-controls"><button className="display-toggle" type="button" onClick={() => toggleTheme?.()} aria-label="Toggle color theme">{theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}<span>{theme === "dark" ? "Light" : "Dark"} theme</span></button><button className={`display-toggle ${focusMode ? "active" : ""}`} type="button" onClick={() => { const next = !focusMode; setFocusMode(next); window.localStorage.setItem("mwm-focus-mode", String(next)); }} aria-pressed={focusMode}><Focus size={14} /><span>Focus mode</span></button></div><button className="button-primary mobile-recruiter" onClick={() => { closeMobile(); setRecruiterOpen(true); }}>Recruiter mode <ArrowUpRight size={16} /></button><div className="mobile-nav-footer"><span>Built for clear thinking.</span><span>LAHORE / REMOTE</span></div></div>}
 
       <aside className="signal-spine" aria-label="Portfolio section index"><div className="spine-mark"><img src={MWM_MARK} alt="" /></div><div className="spine-track">{[["00", "hero", "ENTRY"], ...navItems.map(([label, id], index) => [String(index + 1).padStart(2, "0"), id, label.toUpperCase()] as const)].map(([index, id, label]) => <a key={id} href={`#${id}`} className={activeSection === id ? "active" : ""} aria-label={`Go to ${label.toLowerCase()}`}><span>{index}</span><i /></a>)}</div><span className="spine-caption">MWM / INDEX</span></aside>
 

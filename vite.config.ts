@@ -219,6 +219,18 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    cssCodeSplit: true,
+    chunkSizeWarningLimit: 700,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom"],
+          icons: ["lucide-react"],
+          ui: ["@radix-ui/react-slot", "sonner"],
+        },
+      },
+    },
+    terserOptions: { compress: { drop_console: true, drop_debugger: true } },
   },
   server: {
     port: 3000,

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-# Add a canonical sitemap URL after a public domain is assigned.
+# Add an absolute Sitemap URL after a public domain is assigned.

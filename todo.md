@@ -13,6 +13,11 @@
 - [x] Add recruiter proof features: role-fit cards, architecture challenge, live-looking system health, and shareable resume CTA.
 - [x] Verify interaction quality and performance on desktop and mobile.
 - [ ] Save and deliver the elevated portfolio checkpoint.
+- [x] Add persistent theme/display toggles and a working compact recruiter mode.
+- [x] Improve keyboard navigation, focus states, and interaction feedback.
+- [x] Optimize images, font loading, animations, and bundle behavior for speed.
+- [x] Add top-level SEO: runtime canonical URL strategy, robots/sitemap scaffold, social metadata, JSON-LD, and crawlable headings.
+- [x] Verify functionality, performance, accessibility, and SEO output.
 - [x] Replace ResumeAI with AestheticsPlace.pk across project data, copy, tags, and recruiter-facing descriptions.
 - [x] Generate or select a realistic healthcare clinic operations visual for AestheticsPlace.pk.
 - [x] Verify the updated project card on desktop and mobile, then save a checkpoint.
