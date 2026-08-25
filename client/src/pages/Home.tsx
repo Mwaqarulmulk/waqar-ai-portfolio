@@ -47,7 +47,7 @@ import {
 const HERO_IMAGE = "/manus-storage/waqar-hero-realistic_b76bcce4.jpg";
 const MEGILANCE_IMAGE = "/manus-storage/waqar-megilance-realistic_ffdf65d7.jpg";
 const CAMPUSAXIS_IMAGE = "/manus-storage/waqar-campusaxis-realistic_48aec005.jpg";
-const RESUMEAI_IMAGE = "/manus-storage/waqar-resumeai-realistic_cf97de18.jpg";
+const AESTHETICSPLACE_IMAGE = "/manus-storage/waqar-aestheticsplace-realistic_a7e46936.jpg";
 const PIPELINE_IMAGE = "/manus-storage/waqar-data-pipeline-visual_6b7464e5.png";
 const MWM_MARK = "/manus-storage/waqar-mwm-mark_046bad0d.png";
 const LINKEDIN_URL = "https://linkedin.com/in/mwaqarulmulk";
@@ -99,15 +99,15 @@ const projects = [
   },
   {
     number: "03",
-    title: "ResumeAI Screening",
-    category: "AI / DOCUMENT INTELLIGENCE",
+    title: "AestheticsPlace.pk",
+    category: "HEALTHCARE / FULL-STACK / AUTOMATION",
     description:
-      "A repository-backed experiment that explores resume upload, document parsing, NLP analysis, scoring, and skills-gap feedback without invented production metrics.",
-    tech: ["Python", "NLP", "Document parsing", "Scoring"],
-    image: RESUMEAI_IMAGE,
+      "A full-stack aesthetic clinic platform combining a public patient-facing website with operations tooling for appointments, records, billing, role-based access, and automated reminders.",
+    tech: ["Next.js 16", "TypeScript", "Cloudflare D1", "Tailwind CSS", "Twilio"],
+    image: AESTHETICSPLACE_IMAGE,
     accent: "blue",
-    tags: ["AI", "TOOLS"],
-    flow: ["UPLOAD", "PARSING", "NLP", "SCORING", "SKILLS GAP"],
+    tags: ["HEALTHCARE", "FULL-STACK", "AUTOMATION"],
+    flow: ["BOOKING", "PATIENT RECORDS", "RBAC", "BILLING", "TWILIO"],
   },
 ];
 
