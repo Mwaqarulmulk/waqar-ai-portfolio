@@ -9,7 +9,7 @@ import viteConfig from "../../vite.config";
 export async function setupVite(app: Express, server: Server, port: number) {
   const serverOptions = {
     middlewareMode: true,
-    hmr: { server, clientPort: port },
+    hmr: { server },
     allowedHosts: true as const,
   };
 

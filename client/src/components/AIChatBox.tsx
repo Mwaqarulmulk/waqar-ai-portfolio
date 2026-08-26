@@ -208,9 +208,10 @@ export function AIChatBox({
 
               {suggestedPrompts && suggestedPrompts.length > 0 && (
                 <div className="flex max-w-2xl flex-wrap justify-center gap-2">
-                  {suggestedPrompts.map((prompt, index) => (
+                  {suggestedPrompts.map((prompt) => (
                     <button
-                      key={index}
+                      type="button"
+                      key={prompt}
                       onClick={() => onSendMessage(prompt)}
                       disabled={isLoading}
                       className="rounded-lg border border-border bg-card px-4 py-2 text-sm transition-colors hover:bg-accent disabled:cursor-not-allowed disabled:opacity-50"
@@ -292,8 +293,9 @@ export function AIChatBox({
                   <div className="size-8 shrink-0 mt-1 rounded-full bg-primary/10 flex items-center justify-center">
                     <Sparkles className="size-4 text-primary" />
                   </div>
-                  <div className="rounded-lg bg-muted px-4 py-2.5">
-                    <Loader2 className="size-4 animate-spin text-muted-foreground" />
+                  <div className="chat-typing-indicator" role="status" aria-live="polite" aria-label="Recruiter assistant is typing">
+                    <span className="chat-typing-label">Assistant is typing</span>
+                    <span className="chat-typing-dots" aria-hidden="true"><i /><i /><i /></span>
                   </div>
                 </div>
               )}
@@ -301,6 +303,19 @@ export function AIChatBox({
           </ScrollArea>
         )}
       </div>
+
+      {displayMessages.length > 0 && suggestedPrompts && suggestedPrompts.length > 0 && (
+        <div className="chat-suggestions" aria-label="Suggested recruiter questions">
+          <span className="chat-suggestions-label">TRY ASKING</span>
+          <div className="chat-suggestions-list">
+            {suggestedPrompts.slice(0, 4).map((prompt) => (
+              <button type="button" key={prompt} onClick={() => onSendMessage(prompt)} disabled={isLoading}>
+                {prompt}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Input Area */}
       <form

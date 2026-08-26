@@ -56,4 +56,13 @@ ending.
 - [x] Diagnose the Vite HMR WebSocket failure: the middleware-mode Vite client was falling back to port 5173 instead of the managed Express port 3000.
 - [x] Apply a managed-proxy-compatible HMR configuration by binding Vite HMR to the actual managed server port while keeping production static serving unchanged.
 - [x] Verify development preview connectivity, served Vite client HMR port 3000, browser `[vite] connected` logs after restart, type checks, and production build.
-- [ ] Save and deliver the HMR fix checkpoint.
+- [x] Save and deliver the HMR fix checkpoint.
+- [x] Inspect the current HMR client/server setup and recruiter chatbot interaction state.
+- [x] Harden the proxied Vite WebSocket connection and reconnect behavior without affecting production by using same-server adaptive HMR negotiation.
+- [x] Add a visible recruiter-chat typing indicator with accessible status text.
+- [x] Add useful suggested recruiter questions that submit through the existing chat mutation.
+- [x] Verify public/local HMR sockets, suggested prompts, open/typing/error chatbot states, full tests, type check, and production build.
+- [x] Re-run the proxied preview after the adaptive HMR change and confirm fresh browser-console reconnects without new socket failures.
+- [x] Capture a post-fix preview after a controlled dev-server restart.
+- [ ] Save and deliver the combined fix checkpoint.
+- [x] Confirm the project uses a one-shot `tsc --noEmit` type check; stale watch processes are no longer part of the script.
