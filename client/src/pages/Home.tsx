@@ -3,6 +3,8 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, PointerEvent } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 import WebGLHalo from "../components/WebGLHalo";
+import { AIChatBox, type Message } from "../components/AIChatBox";
+import { trpc } from "../lib/trpc";
 import {
   Activity,
   ArrowRight,
@@ -405,6 +407,10 @@ export default function Home() {
   const [activeSection, setActiveSection] = useState("hero");
   const [commandOpen, setCommandOpen] = useState(false);
   const [recruiterOpen, setRecruiterOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState<Message[]>([]);
+  const [lastChatPrompt, setLastChatPrompt] = useState<string | null>(null);
+  const [chatError, setChatError] = useState<string | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [activeProjectFilter, setActiveProjectFilter] = useState("ALL");
   const [activeSkill, setActiveSkill] = useState("AI");
@@ -417,6 +423,7 @@ export default function Home() {
   const [formSent, setFormSent] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const recruiterChat = trpc.recruiterChat.useMutation();
 
   useEffect(() => {
     const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]') ?? document.createElement("link");
@@ -427,6 +434,11 @@ export default function Home() {
     if (ogUrl) ogUrl.content = canonical.href;
     const storedFocus = window.localStorage.getItem("mwm-focus-mode");
     if (storedFocus === "true") setFocusMode(true);
+    const chatPreview = new URLSearchParams(window.location.search).get("chat");
+    if (import.meta.env.DEV && (chatPreview === "open" || chatPreview === "error")) {
+      setChatOpen(true);
+      if (chatPreview === "error") { setLastChatPrompt("What roles fit Waqar best?"); setChatError("The assistant is temporarily unavailable. Retry the last question or use the verified links above."); }
+    }
     const bootTimer = window.setTimeout(() => setBooting(false), 1700);
     const interval = window.setInterval(() => setBootProgress((current) => Math.min(current + 10, 100)), 150);
     return () => { window.clearTimeout(bootTimer); window.clearInterval(interval); };
@@ -513,6 +525,21 @@ export default function Home() {
     setMobileOpen(false);
   }
 
+  function handleRecruiterChat(content: string) {
+    const nextMessages: Message[] = [...chatMessages, { role: "user", content }];
+    setChatMessages(nextMessages);
+    setLastChatPrompt(content);
+    setChatError(null);
+    recruiterChat.mutate({ messages: nextMessages.map(({ role, content: messageContent }) => ({ role: role === "assistant" ? "assistant" : "user", content: messageContent })) }, {
+      onSuccess: (response) => { setChatError(null); setChatMessages((current) => [...current, { role: "assistant", content: response.content }]); },
+      onError: () => setChatError("The assistant is temporarily unavailable. Retry the last question or use the verified links above."),
+    });
+  }
+
+  function retryRecruiterChat() {
+    if (lastChatPrompt && !recruiterChat.isPending) handleRecruiterChat(lastChatPrompt);
+  }
+
   return (
     <div className={`site-shell theme-${theme} ${reducedMotion ? "reduced-motion" : ""} ${focusMode ? "focus-mode" : ""}`}>
       <a className="skip-link" href="#work">Skip to selected work</a>
@@ -568,6 +595,8 @@ export default function Home() {
 
       <footer className="site-footer"><div className="container"><div className="footer-top"><div className="footer-brand"><span className="brand-mark"><img src={MWM_MARK} alt="" /></span><div><b>MUHAMMAD WAQAR UL MULK</b><span>Software Engineer · AI · Full-Stack · Data</span></div></div><div className="footer-links"><a href="#work">Projects</a><a href="#ai-lab">AI Lab</a><a href="#contact">Contact</a><a href={LINKEDIN_URL} target="_blank" rel="noreferrer">LinkedIn</a><a href={GITHUB_URL} target="_blank" rel="noreferrer">GitHub</a><a href={RESUME_PRIMARY} target="_blank" rel="noreferrer">Resume</a></div></div><div className="footer-bottom"><span>Built with code, curiosity, and too much coffee.</span><span><span className="footer-indicator" /> SYSTEM / ONLINE · VISUAL ONLY</span></div></div></footer>
 
+      <button type="button" className={`chat-launcher ${chatOpen ? "active" : ""}`} onClick={() => setChatOpen((open) => !open)} aria-expanded={chatOpen} aria-controls="recruiter-chat" aria-label={chatOpen ? "Close recruiter assistant" : "Open recruiter assistant"}><Bot size={17} /><span>{chatOpen ? "Close assistant" : "Ask about my work"}</span><span className="chat-launcher-pulse" /></button>
+      {chatOpen && <aside id="recruiter-chat" className="recruiter-chat-shell" aria-label="Recruiter assistant"><div className="recruiter-chat-head"><div><span className="meta-label">MWM / RECRUITER ASSISTANT</span><strong>Ask about my work<span className="accent-dot">.</span></strong><small>Grounded in verified portfolio details</small></div><button type="button" className="icon-button" onClick={() => setChatOpen(false)} aria-label="Close recruiter assistant"><X size={17} /></button></div><AIChatBox messages={chatMessages} onSendMessage={handleRecruiterChat} isLoading={recruiterChat.isPending} className="recruiter-chat-box" height="min(460px, calc(100vh - 190px))" placeholder="Ask about skills, projects, or fit..." emptyStateMessage="I can explain Waqar’s projects, experience, stack, and recruiter fit." suggestedPrompts={["Why is AestheticsPlace.pk relevant to healthcare software?", "What kind of AI systems does Waqar build?", "Which role would be a strong fit?"]} />{chatError && <div className="recruiter-chat-error" role="alert"><span>{chatError}</span><button type="button" onClick={retryRecruiterChat} disabled={recruiterChat.isPending || !lastChatPrompt}>Retry <RefreshCcw size={12} /></button></div>}</aside>}
       {commandOpen && <CommandPalette onClose={() => setCommandOpen(false)} onRecruiter={() => setRecruiterOpen(true)} />}
       {recruiterOpen && <RecruiterPanel onClose={() => setRecruiterOpen(false)} />}
       <div className="scroll-progress" aria-hidden="true"><span /></div>

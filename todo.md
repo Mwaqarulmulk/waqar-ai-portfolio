@@ -27,7 +27,12 @@
 - [x] Add persistent WebGL Off/Eco/High settings for low-power desktop users.
 - [x] Add an accessible settings panel with explicit quality descriptions.
 - [x] Apply quality-specific DPR, particle count, and frame-rate controls with clean canvas teardown.
-- [x] Verify persistence, accessibility, performance, and fallback paths before checkpoint.
+- [x] Verify persistence, accessibility, performance, and fallback paths before the previous checkpoint.
+- [x] Upgrade the static project with a secure backend/API proxy for Groq.
+- [x] Add a recruiter-grounded chatbot endpoint using portfolio context and a server-side `GROQ_API_KEY` secret.
+- [x] Add the chatbot drawer/widget with suggested recruiter questions, loading state, errors, and retry.
+- [x] Verify that no API key is exposed in client code and that the no-key fallback remains usable.
+- [ ] Save and deliver the chatbot checkpoint with Groq setup steps.
 ending.
 - [x] Add persistent theme/display toggles and a working compact recruiter mode.
 - [x] Improve keyboard navigation, focus states, and interaction feedback.
@@ -37,3 +42,10 @@ ending.
 - [x] Replace ResumeAI with AestheticsPlace.pk across project data, copy, tags, and recruiter-facing descriptions.
 - [x] Generate or select a realistic healthcare clinic operations visual for AestheticsPlace.pk.
 - [x] Verify the updated project card on desktop and mobile, then save a checkpoint.
+- [x] Resolve the full-stack capability merge conflicts while preserving the existing portfolio experience.
+- [x] Add an explicit retry action for the last failed recruiter-chat prompt.
+- [x] Add a no-key fallback Vitest case and audit client build output for GROQ_API_KEY exposure.
+- [x] Visually verify the chatbot launcher/drawer, suggested prompts, and retry/error surface before checkpoint.
+- [x] Add and run an isolated no-key fallback test for recruiterChat.
+- [x] Add a development-only chat preview state for visual verification of open and retry/error UI.
+- [x] Capture open-chat and retry/error screenshots before checkpoint.
