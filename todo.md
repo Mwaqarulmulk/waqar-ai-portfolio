@@ -23,7 +23,11 @@
 - [x] Add optional desktop-only WebGL enhancement for MegiLance and AestheticsPlace.pk.
 - [x] Lazy-load the enhancement and preserve the CSS 3D fallback for mobile/unsupported/reduced-motion states.
 - [x] Add an explicit enable/disable control and clean WebGL teardown.
-- [x] Verify rendering, performance, keyboard/touch behavior, and fallback paths before checkpoint.
+- [x] Verify rendering, performance, keyboard/touch behavior, and fallback paths before the previous checkpoint.
+- [x] Add persistent WebGL Off/Eco/High settings for low-power desktop users.
+- [x] Add an accessible settings panel with explicit quality descriptions.
+- [x] Apply quality-specific DPR, particle count, and frame-rate controls with clean canvas teardown.
+- [x] Verify persistence, accessibility, performance, and fallback paths before checkpoint.
 ending.
 - [x] Add persistent theme/display toggles and a working compact recruiter mode.
 - [x] Improve keyboard navigation, focus states, and interaction feedback.

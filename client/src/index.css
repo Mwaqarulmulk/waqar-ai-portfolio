@@ -372,3 +372,10 @@ h2 { font-weight: 620; font-size: clamp(3.4rem, 6.3vw, 6.2rem); letter-spacing: 
 .device-preview:has(.webgl-halo) .device-laptop { filter: drop-shadow(0 0 16px rgba(199,255,91,.12)); }
 @media (max-width: 899px), (pointer: coarse) { .webgl-toggle, .webgl-halo { display: none; } }
 @media (prefers-reduced-motion: reduce) { .webgl-toggle, .webgl-halo { display: none !important; } }
+
+/* WebGL settings popover: explicit quality choices for power-aware recruiters. */
+.webgl-settings { position: absolute; z-index: 8; top: 36px; left: 7px; width: 194px; padding: 12px; border: 1px solid rgba(184,230,255,.25); background: rgba(7,11,15,.94); box-shadow: 0 16px 35px rgba(0,0,0,.38); backdrop-filter: blur(12px); animation: settings-in .18s var(--ease-out); }
+.webgl-settings strong { display: block; color: #e4ede6; font: 10px "Space Grotesk", sans-serif; letter-spacing: .05em; }.webgl-settings > span { display: block; margin-top: 5px; color: #82929a; font: 8px/1.45 "IBM Plex Mono", monospace; }.webgl-quality-options { display: grid; gap: 4px; margin: 10px 0; }.webgl-quality-options button { padding: 7px 8px; color: #7d8d95; border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.025); text-align: left; font: 8px "IBM Plex Mono", monospace; transition: color .18s ease, background .18s ease, border-color .18s ease, transform .18s var(--ease-out); }.webgl-quality-options button:hover, .webgl-quality-options button.selected { color: var(--signal); border-color: rgba(199,255,91,.46); background: rgba(199,255,91,.09); transform: translateX(3px); }.webgl-settings > small { display: block; color: #6f7e86; font: 7px/1.5 "IBM Plex Mono", monospace; }
+@keyframes settings-in { from { opacity: 0; transform: translateY(-5px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (max-width: 899px), (pointer: coarse) { .webgl-settings { display: none; } }
+@media (prefers-reduced-motion: reduce) { .webgl-settings { animation: none; } }

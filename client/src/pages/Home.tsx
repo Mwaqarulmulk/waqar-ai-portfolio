@@ -41,6 +41,7 @@ import {
   Play,
   ScanSearch,
   Send,
+  SlidersHorizontal,
   Server,
   ShieldCheck,
   Sparkles,
@@ -292,11 +293,14 @@ function SystemsArena() {
 
 function DevicePreview({ mode }: { mode: "clinic" | "market" }) {
   const [activeView, setActiveView] = useState(0);
-  const [webglEnabled, setWebglEnabled] = useState(false);
+  const [webglQuality, setWebglQuality] = useState<"off" | "eco" | "high">("off");
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [canUseWebGL, setCanUseWebGL] = useState(false);
   const frameRef = useRef<number | null>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   useEffect(() => {
+    const storedQuality = window.localStorage.getItem("mwm-webgl-quality");
+    if (storedQuality === "eco" || storedQuality === "high" || storedQuality === "off") setWebglQuality(storedQuality);
     const desktop = window.matchMedia("(min-width: 900px) and (pointer: fine)").matches;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const supported = Boolean(document.createElement("canvas").getContext("webgl"));
@@ -315,6 +319,7 @@ function DevicePreview({ mode }: { mode: "clinic" | "market" }) {
     frameRef.current = requestAnimationFrame(() => setTilt({ x: y * -8, y: x * 8 }));
   };
   const resetTilt = () => { if (frameRef.current) cancelAnimationFrame(frameRef.current); setTilt({ x: 0, y: 0 }); };
+  const updateQuality = (quality: "off" | "eco" | "high") => { setWebglQuality(quality); window.localStorage.setItem("mwm-webgl-quality", quality); setSettingsOpen(false); };
   return (
     <div className={`device-preview ${mode}`} style={{ "--tilt-x": `${tilt.x}deg`, "--tilt-y": `${tilt.y}deg` } as CSSProperties} onPointerMove={handlePointerMove} onPointerLeave={resetTilt} role="group" aria-label={`${mode === "clinic" ? "AestheticsPlace clinic operations" : "MegiLance marketplace"} interactive product preview`}>
       <div className="device-shadow" />
@@ -328,8 +333,8 @@ function DevicePreview({ mode }: { mode: "clinic" | "market" }) {
         </div>
         <div className="device-base" />
       </div>
-      {canUseWebGL && <button type="button" className={`webgl-toggle ${webglEnabled ? "active" : ""}`} onClick={() => setWebglEnabled((enabled) => !enabled)} aria-pressed={webglEnabled}><Sparkles size={11} /> {webglEnabled ? "DEPTH ON" : "ENABLE DEPTH"}</button>}
-      {webglEnabled && canUseWebGL && <WebGLHalo accent={mode === "clinic" ? "ice" : "lime"} tiltX={tilt.x} tiltY={tilt.y} />}
+      {canUseWebGL && <><button type="button" className={`webgl-toggle ${webglQuality !== "off" ? "active" : ""}`} onClick={() => setSettingsOpen((open) => !open)} aria-expanded={settingsOpen} aria-controls={`webgl-settings-${mode}`}><SlidersHorizontal size={11} /> {webglQuality === "off" ? "3D SETTINGS" : `DEPTH ${webglQuality.toUpperCase()}`}</button>{settingsOpen && <div id={`webgl-settings-${mode}`} className="webgl-settings" role="dialog" aria-label="WebGL quality settings"><strong>IMMERSIVE DEPTH</strong><span>Choose the visual quality for this preview.</span><div className="webgl-quality-options">{(["off", "eco", "high"] as const).map((quality) => <button type="button" key={quality} className={webglQuality === quality ? "selected" : ""} onClick={() => updateQuality(quality)} aria-pressed={webglQuality === quality}>{quality === "off" ? "OFF" : quality === "eco" ? "ECO / 30 FPS" : "HIGH / 60 FPS"}</button>)}</div><small>Off keeps the lightweight CSS preview. Eco is recommended for low-power laptops.</small></div>}</>}
+      {webglQuality !== "off" && canUseWebGL && <WebGLHalo quality={webglQuality} accent={mode === "clinic" ? "ice" : "lime"} tiltX={tilt.x} tiltY={tilt.y} />}
       <div className="device-tabs" role="tablist" aria-label="Preview screens">{views.map((view, index) => <button type="button" role="tab" aria-selected={activeView === index} key={view.label} onClick={() => setActiveView(index)}>{String(index + 1).padStart(2, "0")} / {view.label}</button>)}</div>
       <span className="device-hint"><MousePointer2 size={11} /> DRAG TO INSPECT</span>
     </div>

@@ -2,6 +2,7 @@
 import { useEffect, useRef } from "react";
 
 type WebGLHaloProps = {
+  quality: "eco" | "high";
   accent: "lime" | "ice";
   tiltX: number;
   tiltY: number;
@@ -42,7 +43,7 @@ function createShader(gl: WebGLRenderingContext, type: number, source: string) {
   return shader;
 }
 
-export default function WebGLHalo({ accent, tiltX, tiltY }: WebGLHaloProps) {
+export default function WebGLHalo({ quality, accent, tiltX, tiltY }: WebGLHaloProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const tiltRef = useRef({ x: tiltX, y: tiltY });
   tiltRef.current = { x: tiltX, y: tiltY };
@@ -66,22 +67,27 @@ export default function WebGLHalo({ accent, tiltX, tiltY }: WebGLHaloProps) {
       -0.88, -0.58, -0.62, -0.2, -0.42, 0.38, -0.1, -0.42, 0.08, 0.56, 0.32, -0.22, 0.52, 0.32, 0.76, -0.42,
       -0.72, 0.48, -0.24, 0.1, 0.2, -0.04, 0.46, 0.46, 0.72, -0.12, 0.86, 0.48,
     ]);
+    const renderPositions = quality === "eco" ? positions.slice(0, 24) : positions;
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, renderPositions, gl.STATIC_DRAW);
     const positionLocation = gl.getAttribLocation(program, "aPosition");
     const timeLocation = gl.getUniformLocation(program, "uTime");
     const tiltLocation = gl.getUniformLocation(program, "uTilt");
     const colorLocation = gl.getUniformLocation(program, "uColor");
     const color = accent === "lime" ? [0.78, 1, 0.36] : [0.72, 0.9, 1];
     let frame = 0;
+    let lastFrame = 0;
+    const frameInterval = quality === "eco" ? 1000 / 30 : 1000 / 60;
     const resize = () => {
-      const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
+      const ratio = Math.min(window.devicePixelRatio || 1, quality === "eco" ? 1 : 1.5);
       const width = Math.max(1, Math.floor(canvas.clientWidth * ratio));
       const height = Math.max(1, Math.floor(canvas.clientHeight * ratio));
       if (canvas.width !== width || canvas.height !== height) { canvas.width = width; canvas.height = height; }
       gl.viewport(0, 0, width, height);
     };
     const render = (time: number) => {
+      if (time - lastFrame < frameInterval) { frame = requestAnimationFrame(render); return; }
+      lastFrame = time;
       resize();
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
@@ -92,7 +98,7 @@ export default function WebGLHalo({ accent, tiltX, tiltY }: WebGLHaloProps) {
       gl.uniform1f(timeLocation, time * 0.001);
       gl.uniform2f(tiltLocation, tiltRef.current.x, tiltRef.current.y);
       gl.uniform3f(colorLocation, color[0], color[1], color[2]);
-      gl.drawArrays(gl.POINTS, 0, positions.length / 2);
+      gl.drawArrays(gl.POINTS, 0, renderPositions.length / 2);
       frame = requestAnimationFrame(render);
     };
     const observer = new ResizeObserver(resize);
@@ -106,7 +112,7 @@ export default function WebGLHalo({ accent, tiltX, tiltY }: WebGLHaloProps) {
       gl.deleteShader(vertex);
       gl.deleteShader(fragment);
     };
-  }, [accent]);
+  }, [accent, quality]);
 
   return <canvas ref={canvasRef} className="webgl-halo" aria-hidden="true" />;
 }
