@@ -2,6 +2,7 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, PointerEvent } from "react";
 import { useTheme } from "../contexts/ThemeContext";
+import WebGLHalo from "../components/WebGLHalo";
 import {
   Activity,
   ArrowRight,
@@ -291,8 +292,16 @@ function SystemsArena() {
 
 function DevicePreview({ mode }: { mode: "clinic" | "market" }) {
   const [activeView, setActiveView] = useState(0);
+  const [webglEnabled, setWebglEnabled] = useState(false);
+  const [canUseWebGL, setCanUseWebGL] = useState(false);
   const frameRef = useRef<number | null>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 900px) and (pointer: fine)").matches;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const supported = Boolean(document.createElement("canvas").getContext("webgl"));
+    setCanUseWebGL(desktop && !reduced && supported);
+  }, []);
   const clinicViews = [{ label: "OPERATIONS", title: "Today at a glance", value: "24", note: "appointments" }, { label: "REMINDERS", title: "Twilio queue", value: "08", note: "scheduled" }, { label: "ACCESS", title: "Staff roles", value: "04", note: "permission sets" }];
   const marketViews = [{ label: "MATCHING", title: "Top fit found", value: "94%", note: "alignment" }, { label: "PROPOSALS", title: "Active pipeline", value: "18", note: "open briefs" }, { label: "TRUST", title: "Contract state", value: "LIVE", note: "escrow ready" }];
   const views = mode === "clinic" ? clinicViews : marketViews;
@@ -319,6 +328,8 @@ function DevicePreview({ mode }: { mode: "clinic" | "market" }) {
         </div>
         <div className="device-base" />
       </div>
+      {canUseWebGL && <button type="button" className={`webgl-toggle ${webglEnabled ? "active" : ""}`} onClick={() => setWebglEnabled((enabled) => !enabled)} aria-pressed={webglEnabled}><Sparkles size={11} /> {webglEnabled ? "DEPTH ON" : "ENABLE DEPTH"}</button>}
+      {webglEnabled && canUseWebGL && <WebGLHalo accent={mode === "clinic" ? "ice" : "lime"} tiltX={tilt.x} tiltY={tilt.y} />}
       <div className="device-tabs" role="tablist" aria-label="Preview screens">{views.map((view, index) => <button type="button" role="tab" aria-selected={activeView === index} key={view.label} onClick={() => setActiveView(index)}>{String(index + 1).padStart(2, "0")} / {view.label}</button>)}</div>
       <span className="device-hint"><MousePointer2 size={11} /> DRAG TO INSPECT</span>
     </div>

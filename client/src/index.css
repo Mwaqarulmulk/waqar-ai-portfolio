@@ -363,3 +363,12 @@ h2 { font-weight: 620; font-size: clamp(3.4rem, 6.3vw, 6.2rem); letter-spacing: 
 .project-visual:has(.device-preview) .project-mini-flow, .project-visual:has(.device-preview) .project-hover-label { opacity: .2; }
 @media (max-width: 720px) { .device-preview { inset: 42px 10px 10px; }.device-laptop { width: min(94%, 330px); }.device-screen { min-height: 152px; padding: 10px 11px 12px; }.device-screen-head { padding: 11px 0 9px; }.device-screen-head strong { font-size: 13px; }.device-metric { font-size: 21px; }.device-cards { padding-top: 8px; }.device-tabs button { padding: 5px 6px; font-size: 6px; }.device-hint { display: none; } }
 @media (prefers-reduced-motion: reduce) { .device-laptop, .device-chart span, .device-live i { animation: none !important; transition: none !important; }.device-laptop { transform: rotateZ(-3deg); } }
+
+/* Optional WebGL layer: a restrained desktop enhancement above the CSS 3D fallback. */
+.webgl-halo { position: absolute; z-index: 5; inset: 18px 11%; width: 78%; height: 70%; pointer-events: none; opacity: .9; mix-blend-mode: screen; filter: blur(.1px); }
+.webgl-toggle { position: absolute; z-index: 7; top: 5px; left: 7px; display: inline-flex; align-items: center; gap: 5px; padding: 6px 8px; color: #879ba2; border: 1px solid rgba(184,230,255,.2); background: rgba(5,9,13,.72); font: 7px "IBM Plex Mono", monospace; letter-spacing: .05em; backdrop-filter: blur(8px); transition: color .2s ease, border-color .2s ease, background .2s ease, transform .2s var(--ease-out); }
+.webgl-toggle:hover, .webgl-toggle.active { color: var(--signal); border-color: rgba(199,255,91,.52); background: rgba(199,255,91,.1); transform: translateY(-2px); }
+.webgl-toggle:active { transform: scale(.97); }
+.device-preview:has(.webgl-halo) .device-laptop { filter: drop-shadow(0 0 16px rgba(199,255,91,.12)); }
+@media (max-width: 899px), (pointer: coarse) { .webgl-toggle, .webgl-halo { display: none; } }
+@media (prefers-reduced-motion: reduce) { .webgl-toggle, .webgl-halo { display: none !important; } }

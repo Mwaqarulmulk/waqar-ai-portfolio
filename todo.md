@@ -19,7 +19,12 @@
 - [x] Verify the animated experience; final checkpoint pending.
 - [x] Add lightweight 3D device previews for AestheticsPlace.pk and MegiLance.
 - [x] Add pointer tilt, touch-safe reset, keyboard labels, and reduced-motion fallbacks.
-- [x] Verify the previews on desktop and mobile; final checkpoint pending.
+- [x] Verify the previews on desktop and mobile, then save the previous checkpoint.
+- [x] Add optional desktop-only WebGL enhancement for MegiLance and AestheticsPlace.pk.
+- [x] Lazy-load the enhancement and preserve the CSS 3D fallback for mobile/unsupported/reduced-motion states.
+- [x] Add an explicit enable/disable control and clean WebGL teardown.
+- [x] Verify rendering, performance, keyboard/touch behavior, and fallback paths before checkpoint.
+ending.
 - [x] Add persistent theme/display toggles and a working compact recruiter mode.
 - [x] Improve keyboard navigation, focus states, and interaction feedback.
 - [x] Optimize images, font loading, animations, and bundle behavior for speed.
