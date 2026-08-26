@@ -1,5 +1,6 @@
 // Signal / Systems: this page is a readable AI engineering instrument—indexed sections, honest proof chips, and motion used to explain systems.
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties, PointerEvent } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 import {
   Activity,
@@ -288,6 +289,42 @@ function SystemsArena() {
   );
 }
 
+function DevicePreview({ mode }: { mode: "clinic" | "market" }) {
+  const [activeView, setActiveView] = useState(0);
+  const frameRef = useRef<number | null>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const clinicViews = [{ label: "OPERATIONS", title: "Today at a glance", value: "24", note: "appointments" }, { label: "REMINDERS", title: "Twilio queue", value: "08", note: "scheduled" }, { label: "ACCESS", title: "Staff roles", value: "04", note: "permission sets" }];
+  const marketViews = [{ label: "MATCHING", title: "Top fit found", value: "94%", note: "alignment" }, { label: "PROPOSALS", title: "Active pipeline", value: "18", note: "open briefs" }, { label: "TRUST", title: "Contract state", value: "LIVE", note: "escrow ready" }];
+  const views = mode === "clinic" ? clinicViews : marketViews;
+  const current = views[activeView];
+  const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || event.pointerType === "touch") return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    if (frameRef.current) cancelAnimationFrame(frameRef.current);
+    frameRef.current = requestAnimationFrame(() => setTilt({ x: y * -8, y: x * 8 }));
+  };
+  const resetTilt = () => { if (frameRef.current) cancelAnimationFrame(frameRef.current); setTilt({ x: 0, y: 0 }); };
+  return (
+    <div className={`device-preview ${mode}`} style={{ "--tilt-x": `${tilt.x}deg`, "--tilt-y": `${tilt.y}deg` } as CSSProperties} onPointerMove={handlePointerMove} onPointerLeave={resetTilt} role="group" aria-label={`${mode === "clinic" ? "AestheticsPlace clinic operations" : "MegiLance marketplace"} interactive product preview`}>
+      <div className="device-shadow" />
+      <div className="device-laptop">
+        <div className="device-camera" />
+        <div className="device-screen">
+          <div className="device-topbar"><span className="device-brand-dot" /><span>{mode === "clinic" ? "AESTHETICSPLACE / OPS" : "MEGILANCE / STUDIO"}</span><span className="device-live"><i /> LIVE</span></div>
+          <div className="device-screen-head"><div><small>{current.label}</small><strong>{current.title}</strong></div><span className="device-metric">{current.value}<em>{current.note}</em></span></div>
+          <div className="device-chart"><span /><span /><span /><span /><span /><span /><span /><b /></div>
+          <div className="device-cards"><div><small>{mode === "clinic" ? "Next slot" : "Best match"}</small><strong>{mode === "clinic" ? "Dr. Amna / 11:30" : "Product Designer"}</strong></div><div><small>{mode === "clinic" ? "Automation" : "Confidence"}</small><strong>{mode === "clinic" ? "Reminder ready" : "High / grounded"}</strong></div></div>
+        </div>
+        <div className="device-base" />
+      </div>
+      <div className="device-tabs" role="tablist" aria-label="Preview screens">{views.map((view, index) => <button type="button" role="tab" aria-selected={activeView === index} key={view.label} onClick={() => setActiveView(index)}>{String(index + 1).padStart(2, "0")} / {view.label}</button>)}</div>
+      <span className="device-hint"><MousePointer2 size={11} /> DRAG TO INSPECT</span>
+    </div>
+  );
+}
+
 function ProjectCard({ project }: { project: typeof projects[number] }) {
   return (
     <article className={`project-card ${project.accent}`}>
@@ -295,6 +332,7 @@ function ProjectCard({ project }: { project: typeof projects[number] }) {
         <div className="project-visual-overlay" />
         <div className="project-orbit orbit-a" />
         <div className="project-orbit orbit-b" />
+        {(project.title === "AestheticsPlace.pk" || project.title === "MegiLance") && <DevicePreview mode={project.title === "AestheticsPlace.pk" ? "clinic" : "market"} />}
         <div className="project-card-top"><span>{project.number}</span><span>{project.category}</span></div>
         <div className="project-mini-flow"><Flow items={project.flow} compact /></div>
         <div className="project-hover-label"><Eye size={15} /> INSPECT SYSTEM <ArrowUpRight size={15} /></div>

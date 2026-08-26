@@ -17,6 +17,9 @@
 - [x] Add sliding underlines, magnetic button cues, card lift, image zoom, and subtle parallax.
 - [x] Preserve reduced-motion, keyboard focus, and mobile performance fallbacks.
 - [x] Verify the animated experience; final checkpoint pending.
+- [x] Add lightweight 3D device previews for AestheticsPlace.pk and MegiLance.
+- [x] Add pointer tilt, touch-safe reset, keyboard labels, and reduced-motion fallbacks.
+- [x] Verify the previews on desktop and mobile; final checkpoint pending.
 - [x] Add persistent theme/display toggles and a working compact recruiter mode.
 - [x] Improve keyboard navigation, focus states, and interaction feedback.
 - [x] Optimize images, font loading, animations, and bundle behavior for speed.
