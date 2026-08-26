@@ -6,6 +6,10 @@ import type { TrpcContext } from "./_core/context";
 import { ENV } from "./_core/env";
 import { z } from "zod";
 
+export function sanitizeAssistantContent(content: string) {
+  return content.replace(/<think>[\s\S]*?<\/think>/gi, "").replace(/^\s+|\s+$/g, "").trim();
+}
+
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
   system: systemRouter,
@@ -53,16 +57,18 @@ RECRUITER ANGLES:
       const upstream = await fetch(ENV.groqApiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${ENV.groqApiKey}` },
-        body: JSON.stringify({ model: "llama-3.3-70b-versatile", temperature: 0.25, max_tokens: 500, messages: [{ role: "system", content: systemPrompt }, ...input.messages] }),
+        body: JSON.stringify({ model: ENV.groqModel, temperature: 0.25, max_completion_tokens: 500, reasoning_effort: "none", reasoning_format: "hidden", messages: [{ role: "system", content: systemPrompt }, ...input.messages] }),
         signal: AbortSignal.timeout(20_000),
       });
       if (!upstream.ok) {
         const detail = await upstream.text().catch(() => "");
         console.error("[RecruiterChat] Groq request failed", upstream.status, detail.slice(0, 300));
-        throw new Error("The recruiter assistant is temporarily unavailable. Please try again.");
+        const reason = upstream.status === 401 || upstream.status === 403 ? "The recruiter assistant credentials need attention." : upstream.status === 404 ? "The recruiter assistant model is unavailable." : "The recruiter assistant is temporarily unavailable.";
+        throw new Error(`${reason} Please try again.`);
       }
       const payload = await upstream.json() as { choices?: Array<{ message?: { content?: string } }> };
-      const content = payload.choices?.[0]?.message?.content?.trim();
+      const rawContent = payload.choices?.[0]?.message?.content ?? "";
+      const content = sanitizeAssistantContent(rawContent);
       if (!content) throw new Error("The recruiter assistant returned an empty answer.");
       return { content, configured: true };
     }),

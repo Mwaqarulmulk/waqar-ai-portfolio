@@ -9,4 +9,5 @@ export const ENV = {
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
   groqApiKey: process.env.GROQ_API_KEY ?? "",
   groqApiUrl: process.env.GROQ_API_URL ?? "https://api.groq.com/openai/v1/chat/completions",
+  groqModel: process.env.GROQ_MODEL ?? "qwen/qwen3.6-27b",
 };

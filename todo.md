@@ -12,7 +12,7 @@
 - [x] Add tasteful motion: scroll reveals, cursor-reactive telemetry, state transitions, and reduced-motion fallbacks.
 - [x] Add recruiter proof features: role-fit cards, architecture challenge, live-looking system health, and shareable resume CTA.
 - [x] Verify interaction quality and performance on desktop and mobile.
-- [ ] Save and deliver the elevated portfolio checkpoint.
+- [x] Save and deliver the elevated portfolio checkpoint.
 - [x] Add animated text reveal and headline hover treatments.
 - [x] Add sliding underlines, magnetic button cues, card lift, image zoom, and subtle parallax.
 - [x] Preserve reduced-motion, keyboard focus, and mobile performance fallbacks.
@@ -32,7 +32,7 @@
 - [x] Add a recruiter-grounded chatbot endpoint using portfolio context and a server-side `GROQ_API_KEY` secret.
 - [x] Add the chatbot drawer/widget with suggested recruiter questions, loading state, errors, and retry.
 - [x] Verify that no API key is exposed in client code and that the no-key fallback remains usable.
-- [ ] Save and deliver the chatbot checkpoint with Groq setup steps.
+- [x] Save and deliver the chatbot checkpoint with Groq setup steps.
 ending.
 - [x] Add persistent theme/display toggles and a working compact recruiter mode.
 - [x] Improve keyboard navigation, focus states, and interaction feedback.
@@ -49,3 +49,7 @@ ending.
 - [x] Add and run an isolated no-key fallback test for recruiterChat.
 - [x] Add a development-only chat preview state for visual verification of open and retry/error UI.
 - [x] Capture open-chat and retry/error screenshots before checkpoint.
+- [x] Diagnose the recruiter assistant mutation error from the reported timestamp: Groq returned 404 because the previous model was unavailable for this key.
+- [x] Fix the Groq proxy/request handling: use active `qwen/qwen3.6-27b`, disable reasoning tokens, use `max_completion_tokens`, and preserve status-specific errors.
+- [x] Add regression coverage for the model payload, no-key fallback, reasoning sanitization, and secret validation.
+- [x] Verify the recruiter chat end to end with a live tRPC smoke test, full tests, type check, and production build; fix checkpoint pending.

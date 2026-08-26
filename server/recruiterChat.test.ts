@@ -22,16 +22,19 @@ describe("recruiterChat", () => {
   });
 
   it("returns the assistant response through the server proxy", async () => {
-    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ choices: [{ message: { content: "AestheticsPlace.pk demonstrates full-stack healthcare software, RBAC, Cloudflare D1, and Twilio automation." } }] }), { status: 200, headers: { "Content-Type": "application/json" } }));
+    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ choices: [{ message: { content: "<think>private reasoning</think>AestheticsPlace.pk demonstrates full-stack healthcare software, RBAC, Cloudflare D1, and Twilio automation." } }] }), { status: 200, headers: { "Content-Type": "application/json" } }));
     vi.stubGlobal("fetch", fetchMock);
 
     const result = await appRouter.createCaller(context).recruiterChat({ messages: [{ role: "user", content: "Why is AestheticsPlace.pk relevant?" }] });
 
     expect(result.configured).toBe(true);
     expect(result.content).toContain("AestheticsPlace.pk");
+    expect(result.content).not.toContain("private reasoning");
     expect(fetchMock).toHaveBeenCalledOnce();
     const request = fetchMock.mock.calls[0]?.[1] as RequestInit;
     expect((request.headers as Record<string, string>).Authorization).toMatch(/^Bearer /);
+    expect(String(request.body)).toContain('"model":"qwen/qwen3.6-27b"');
+    expect(String(request.body)).toContain('"reasoning_format":"hidden"');
     expect(String(request.body)).toContain("AestheticsPlace.pk");
   });
 });
