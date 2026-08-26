@@ -53,3 +53,7 @@ ending.
 - [x] Fix the Groq proxy/request handling: use active `qwen/qwen3.6-27b`, disable reasoning tokens, use `max_completion_tokens`, and preserve status-specific errors.
 - [x] Add regression coverage for the model payload, no-key fallback, reasoning sanitization, and secret validation.
 - [x] Verify the recruiter chat end to end with a live tRPC smoke test, full tests, type check, and production build; fix checkpoint pending.
+- [x] Diagnose the Vite HMR WebSocket failure: the middleware-mode Vite client was falling back to port 5173 instead of the managed Express port 3000.
+- [x] Apply a managed-proxy-compatible HMR configuration by binding Vite HMR to the actual managed server port while keeping production static serving unchanged.
+- [x] Verify development preview connectivity, served Vite client HMR port 3000, browser `[vite] connected` logs after restart, type checks, and production build.
+- [ ] Save and deliver the HMR fix checkpoint.
