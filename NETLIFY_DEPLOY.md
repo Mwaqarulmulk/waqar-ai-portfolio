@@ -14,6 +14,10 @@ The public portfolio does not require a client-side API key to render. Do not ad
 
 The recruiter assistant uses the Express/tRPC server bundled by this project. A standard Netlify static deploy serves the frontend only; it does not run the bundled Express server. The site remains usable without the assistant, while live chatbot responses require either the built-in Manus deployment or a separately configured Netlify Function/server deployment that keeps the Groq key server-side.
 
+## Asset proxy variables
+
+The committed `netlify/functions/asset-proxy.mjs` function serves the existing portfolio images and PDF resumes through short-lived signed CDN redirects. Add the following two server-only variables in Netlify, using values from the Manus project environment: `BUILT_IN_FORGE_API_URL` for the Forge API base URL and `BUILT_IN_FORGE_API_KEY` for the server-side Forge bearer key. The function also accepts the aliases `MANUS_FORGE_API_URL` and `MANUS_FORGE_API_KEY`. Do not prefix these variables with `VITE_`, because they must never enter the browser bundle.
+
 ## Local verification
 
 Run `pnpm install --frozen-lockfile`, then `pnpm build`. The expected frontend output is `dist/public/index.html`. The SPA fallback is provided by both `netlify.toml` and `client/public/_redirects`, allowing direct navigation and refreshes on client-side routes.

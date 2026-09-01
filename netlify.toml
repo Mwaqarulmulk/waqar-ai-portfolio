@@ -1,9 +1,16 @@
 [build]
   command = "pnpm build"
   publish = "dist/public"
+  functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "22"
+
+[[redirects]]
+  from = "/manus-storage/*"
+  to = "/.netlify/functions/asset-proxy?key=:splat"
+  status = 200
+  force = true
 
 [[redirects]]
   from = "/*"

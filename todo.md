@@ -77,3 +77,8 @@ ending.
 - [x] Document Netlify build settings and the separate server-side chatbot limitation.
 - [x] Validate Netlify-compatible output, tests, and production smoke behavior.
 - [x] Push the Netlify deployment fix to GitHub.
+- [x] Diagnose missing image, font, resume, and storage asset requests on the live Netlify deployment.
+- [x] Make all required portfolio assets resolve from Netlify-compatible published paths.
+- [ ] Verify asset requests against the production build and push the fix to GitHub.
+- [ ] Configure Netlify server-only Forge variables for the asset proxy.
+- [ ] Redeploy the Netlify site from this repository and verify hero, logo, and resume asset requests live.
