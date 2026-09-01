@@ -66,7 +66,14 @@ ending.
 - [x] Capture a post-fix preview after a controlled dev-server restart.
 - [x] Save and deliver the combined fix checkpoint.
 - [x] Confirm the project uses a one-shot `tsc --noEmit` type check; stale watch processes are no longer part of the script.
-- [ ] Confirm the GitHub owner, repository name, visibility, and authorized connection.
-- [ ] Prepare the repository export without committing secrets or generated build artifacts.
-- [ ] Export the completed portfolio code through the authorized GitHub flow.
-- [ ] Verify the repository contents and deliver the GitHub URL.
+- [x] Confirm the GitHub owner, repository name, private visibility, main branch, and authorized connection.
+- [x] Prepare the repository export without committing environment secrets or generated build artifacts.
+- [x] Export the completed portfolio code through the authorized GitHub flow.
+- [x] Verify the private repository, main branch, and pushed commits; deliver the GitHub URL.
+- [x] Get explicit confirmation that `Mwaqarulmulk/waqar-ai-portfolio`, private visibility, and main branch are the intended GitHub destination.
+- [x] Deliver the verified GitHub repository URL to the user.
+- [x] Reconfirm the GitHub export checklist after explicit destination confirmation and URL delivery.
+- [x] Fix Netlify deployment so the current Signal / Systems portfolio loads from the correct publish directory and supports SPA fallback.
+- [x] Document Netlify build settings and the separate server-side chatbot limitation.
+- [x] Validate Netlify-compatible output, tests, and production smoke behavior.
+- [ ] Push the Netlify deployment fix to GitHub.
