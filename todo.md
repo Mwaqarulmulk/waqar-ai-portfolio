@@ -76,4 +76,4 @@ ending.
 - [x] Fix Netlify deployment so the current Signal / Systems portfolio loads from the correct publish directory and supports SPA fallback.
 - [x] Document Netlify build settings and the separate server-side chatbot limitation.
 - [x] Validate Netlify-compatible output, tests, and production smoke behavior.
-- [ ] Push the Netlify deployment fix to GitHub.
+- [x] Push the Netlify deployment fix to GitHub.
