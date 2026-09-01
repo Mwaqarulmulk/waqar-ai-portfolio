@@ -64,5 +64,9 @@ ending.
 - [x] Verify public/local HMR sockets, suggested prompts, open/typing/error chatbot states, full tests, type check, and production build.
 - [x] Re-run the proxied preview after the adaptive HMR change and confirm fresh browser-console reconnects without new socket failures.
 - [x] Capture a post-fix preview after a controlled dev-server restart.
-- [ ] Save and deliver the combined fix checkpoint.
+- [x] Save and deliver the combined fix checkpoint.
 - [x] Confirm the project uses a one-shot `tsc --noEmit` type check; stale watch processes are no longer part of the script.
+- [ ] Confirm the GitHub owner, repository name, visibility, and authorized connection.
+- [ ] Prepare the repository export without committing secrets or generated build artifacts.
+- [ ] Export the completed portfolio code through the authorized GitHub flow.
+- [ ] Verify the repository contents and deliver the GitHub URL.
