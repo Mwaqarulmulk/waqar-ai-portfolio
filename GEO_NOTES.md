@@ -12,6 +12,8 @@ independently loaded by the research tool and are not described as verified.
 
 The non-forced Netlify SPA fallback lets existing files take precedence. Keep the
 asset-proxy redirect and function; server secrets must never use a `VITE_` prefix.
+The duplicate `public/_redirects` catch-all was removed because it shadowed the
+asset-proxy rule in `netlify.toml`. The SPA fallback remains in that configuration.
 Canonical URLs deliberately stay on the production origin in preview builds.
 Function tests live in `netlify/tests`, outside the deployed functions directory.
 Netlify otherwise treats `asset-proxy.test.ts` as a function and rejects the dot
