@@ -33,7 +33,7 @@ describe("Netlify asset proxy", () => {
   it("redirects to the signed CDN URL for a valid asset", async () => {
     vi.stubEnv("MANUS_FORGE_API_URL", "https://forge.example.com");
     vi.stubEnv("MANUS_FORGE_API_KEY", "test-key");
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ url: "https://cdn.example.com/image.png?signature=test" }), { status: 200 })));
+    vi.stubGlobal("fetch", vi.fn().mockImplementation(async () => new Response(JSON.stringify({ url: "https://cdn.example.com/image.png?signature=test" }), { status: 200 })));
 
     const response = await handler(new Request("https://example.com/.netlify/functions/asset-proxy?key=image.png"));
     expect(response.status).toBe(307);
