@@ -20,4 +20,4 @@ The committed `netlify/functions/asset-proxy.mjs` function serves the existing p
 
 ## Local verification
 
-Run `pnpm install --frozen-lockfile`, then `pnpm build`. The expected frontend output is `dist/public/index.html`. The SPA fallback is provided by both `netlify.toml` and `client/public/_redirects`, allowing direct navigation and refreshes on client-side routes.
+Run `pnpm install --frozen-lockfile`, then `pnpm build` and `pnpm test:geo`. The expected frontend output is `dist/public/index.html`. The SPA fallback lives in `netlify.toml`, after the asset-proxy rule. Do not add a duplicate catch-all in `client/public/_redirects`: Netlify processes that file first and would serve HTML in place of proxied images and PDFs. Existing static service and case-study files take precedence over the non-forced SPA fallback.

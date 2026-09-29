@@ -21,11 +21,15 @@ export default async function handler(request) {
   }
 
   const requestUrl = new URL(request.url);
-  const key = safeStorageKey(requestUrl.searchParams.get("key") || "");
+  // Netlify's Request may retain the public URL rather than the rewrite query.
+  const pathKey = requestUrl.pathname.startsWith("/manus-storage/")
+    ? requestUrl.pathname.slice("/manus-storage/".length)
+    : "";
+  const key = safeStorageKey(requestUrl.searchParams.get("key") || pathKey);
   if (!key) return new Response("Invalid asset key", { status: 400 });
 
-  const forgeApiUrl = process.env.MANUS_FORGE_API_URL || process.env.BUILT_IN_FORGE_API_URL;
-  const forgeApiKey = process.env.MANUS_FORGE_API_KEY || process.env.BUILT_IN_FORGE_API_KEY;
+  const forgeApiUrl = Netlify.env.get("MANUS_FORGE_API_URL") || Netlify.env.get("BUILT_IN_FORGE_API_URL");
+  const forgeApiKey = Netlify.env.get("MANUS_FORGE_API_KEY") || Netlify.env.get("BUILT_IN_FORGE_API_KEY");
   if (!forgeApiUrl || !forgeApiKey) {
     return new Response("Asset proxy is not configured", { status: 503 });
   }
