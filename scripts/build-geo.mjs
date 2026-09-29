@@ -58,7 +58,7 @@ function schema(page) {
 }
 
 function metadata(page) {
-  const title = page.route === "/" ? page.title : `${page.title} | ${name}`;
+  const title = page.title.includes(name) ? page.title : `${page.title} | ${name}`;
   return `<title>${escape(title)}</title>
 <meta name="description" content="${escape(page.description)}">
 <meta name="author" content="${name}">
