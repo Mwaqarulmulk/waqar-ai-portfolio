@@ -13,6 +13,9 @@ independently loaded by the research tool and are not described as verified.
 The non-forced Netlify SPA fallback lets existing files take precedence. Keep the
 asset-proxy redirect and function; server secrets must never use a `VITE_` prefix.
 Canonical URLs deliberately stay on the production origin in preview builds.
+Function tests live in `netlify/tests`, outside the deployed functions directory.
+Netlify otherwise treats `asset-proxy.test.ts` as a function and rejects the dot
+in its name. The deployment preview exposed this pre-existing packaging problem.
 
 ## Evidence reviewed September 29, 2026
 

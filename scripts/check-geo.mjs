@@ -13,7 +13,8 @@ const get = async route => {
   assert.equal(response.status, 200, route);
   const expected = route.endsWith("/") ? "text/html" : route.endsWith(".xml") ? "xml" : "text/plain";
   assert.ok(response.headers.get("content-type")?.includes(expected), `Wrong content type: ${route}`);
-  assert.ok(!response.headers.get("x-robots-tag")?.includes("noindex"), `Blocked: ${route}`);
+  // Deploy previews should be noindex; only the production origin must be indexable.
+  if (live === origin) assert.ok(!response.headers.get("x-robots-tag")?.includes("noindex"), `Blocked: ${route}`);
   return response.text();
 };
 const sitemap = await get("/sitemap.xml");

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import handler from "./asset-proxy.mjs";
+import handler from "../functions/asset-proxy.mjs";
 
 describe("Netlify asset proxy", () => {
   afterEach(() => {
